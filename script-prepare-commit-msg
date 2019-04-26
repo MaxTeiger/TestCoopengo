@@ -1,0 +1,63 @@
+#!/usr/bin/env python3
+
+import os
+#import library to use Redmine API
+from redminelib import Redmine
+import re
+import sys
+
+# https://stackoverflow.com/questions/19102714/how-would-i-write-a-pre-merge-hook-in-git
+
+# retrieve the redmine token to connect to the api
+REDMINE_URL = 'https://support.coopengo.com'
+REDMINE_TOKEN = os.environ['REDMINE_TOKEN']
+requestFromGit = sys.argv[2]
+
+print("Request type : " +requestFromGit)
+
+if requestFromGit == "merge":
+    # Here, we find the right path where issues.md files are stored
+    thisfolder = os.path.dirname(os.path.abspath(__file__))
+    sep = "/TestCoopengo/"
+    goodFolder = thisfolder.split(sep, 1)[0] +"/TestCoopengo/doc/issues/"
+    print("Path to file :\t " +goodFolder)
+    
+    # Connect to redmine 
+    # update the issue (description at least, maybe the title)
+    print("Trying to connect to RedMine...")
+    # Connect to redmine deposit of the project 
+    ## If posible, use the bot's apikey to identify
+    redmine = Redmine(REDMINE_URL, key=REDMINE_TOKEN)
+    print("Connected ! \n")
+    
+    # for all file in this directory, 
+    for filename in os.listdir(goodFolder):
+
+        # if the file ends with .md (basically all the files in the directory)
+        if filename.endswith(".md"):
+
+            # Initialize variables for each loop
+            title_en, title_fr, parametrage_fr, scripts_fr, business_modules, original_description = "","","","","",""
+
+
+            goodPath = goodFolder +filename
+            
+            print("\nFile : " +goodPath)
+            
+            file = open(goodPath, "r")
+            fileContent = file.read()
+
+
+            # fileContent = fileContent.replace("\n", "")
+            # we retrieve the number of the issue for this file
+            issue_number = filename.split(".",1)[0]
+            print("Dealing with issue " +issue_number +"...")
+
+            redmine.issue.update(issue_number, description=fileContent)
+
+            print("Issue updated with success.\n")
+
+            continue
+
+        else:
+            continue
