@@ -99,8 +99,11 @@ def go():
     Story.append(Spacer(1,0.2*inch))
     Story.append(t)
     Story.append(Spacer(1,0.4*inch))
+
     p = Paragraph("3. Installation", style)
     Story.append(p)
+
+    p
 
     doc.build(Story, onFirstPage=myFirstPage, onLaterPages=myLaterPages)
     
