@@ -173,7 +173,7 @@ for issue in get_issues():
     if issue['custom_fields'].get(9, ''):
         scripts.append(issue)
 
-
+# fill the template depending on issues retrieved from redmine 
 render = template.render_unicode(version_name=version_name, 
     livraison_recette=version['custom_fields'][5], 
     livraison_production=version['custom_fields'][6], 
