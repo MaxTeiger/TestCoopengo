@@ -1,39 +1,73 @@
-# RedMine syncronization with GitHub 
+# Feature #10604
+## Objectives
 
-## Setup
+In order to improve the quality of informations that is delivered to the client, we want a way to:
 
-### On GitHub
+-   Structure bug fixes / features details
+-   Allow a peer review of those details
+-   Automatically check the contents
+-   Generate and include the contents in the delivery notes
 
-* Go to your **GitHub** repository
-* Go to settings > Webhooks section
-* Create new webhook
-* Add the address of the server on which the application will run
-* Add a **secret key** for the security of the application (upper case, lower case, numbers...). Please note this key we will use it later
-* Choose the activation mode on "Pull request".
-* Save the webhook
+Doing so will require the following:
 
-### In config.py file
+-   Add a command line utility to pre-set the details from an issue number. This utility will be used by the developper to easily describe their doing, and will use a pre-defined parsable markdown structure [#10605](https://support.coopengo.com/issues/10605) 
+-   Improve pre-commit checks to validate said structure [#10606](https://support.coopengo.com/issues/10606)
+-   Post-commit (hook or cron?) update the redmine issue description with the contents that were reviewed [#10607](https://support.coopengo.com/issues/10607 "Task: Update redmine descriptions according to contents of #10605 (A traiter)")
+-   Update integration scripts to properly parse and use the structure [#10608](https://support.coopengo.com/issues/10608 "Task: Update delivery slip generation for 10604 (A traiter)")
 
-* Change SECRET_TOKEN to your **secret key**
-* Change REDMINE_API_KEY to your **redmine api key**
-* Change REDMINE_URL to your **RedMine URL desposit**
 
-### On your server
-You just have to run :
+## Prerequisites
 
+#### New libraries used: 
+python-redmine
 ```bash
-$ docker-compose up
+$pip install python-redmine
 ```
-or 
+Mako
 ```bash
-$ docker-compose up -d
+$pip install Mako
+```
+or
+```bash
+$pip3 install Mako
 ```
 
-For the moment, it performs the same action regardless of the action performed on a pull request (whether it is opened, merged, re-opened, or edited).
-Maybe a next version that will change the RedMine status to :
+mistune
+```bash
+$pip install mistune
+```
 
-| GitHub                        | RedMine                     |
-|-------------------------------|-----------------------------|
-| New Pull Request              | En revue                    |
-| Pull request closed           | A traiter                   |
-| Merge pull request            | Traité                      |
+Define REDMINE_TOKEN as an environment variable:
+```bash
+$export REDMINE_TOKEN=<your_token>
+```
+
+## How to use
+#### Step 1
+In **coog** virtualenv, use: 
+```bash
+$coog redmine update <issue_number>
+```
+this will open and create an editable .md file in **[COOG]/doc/issues**. 
+>**WARNING: Do not remove tags** 
+
+Once your modifications are finished, you can save and close the editor.
+
+#### Step 2
+Must update drone to test files from issues: 
+* If files exists (check project in Redmine, list tickets, observe if .md files are in the project)
+* If files contains the required tags (check if fields are not empty)
+* Check if the en tags match the fr ones
+
+#### Step 3
+
+For the moment, only prepare-commit-message in **.git/hooks** is implemented. This hook is triggered before a merge request is done, but it stays local. 
+The hook updates redmine tickets with the contents of files in **doc/issues**, and then delete the files because we don't need them after the merge. 
+
+
+#### Step 4
+You just have to run bl_fr2.py *(can be converted into command line)* with the project name and version for which you want a review.
+```bash
+$python bl_fr2.py <api_key> "<project_name>" "<version>"
+```
+This will create a HTML file in doc/reviews which name is version-review.html

@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# -*- encoding: utf-8 -*-
+
 import requests
 import os
 import sys
@@ -16,8 +18,8 @@ def parse_description(issueTitle, issueDescr, trackerName, issue_number, isAlrea
 
     # Here, we find the right path to store issues.md files
     thisfolder = os.path.dirname(os.path.abspath(__file__))
-    sep = "/coog/"
-    goodFolder = thisfolder.split(sep, 1)[0] +"/coog/doc/issues/"
+    sep = "/TestCoopengo/"
+    goodFolder = thisfolder.split(sep, 1)[0] +"/doc/issues/"
     pathToFile = goodFolder +issue_number +".md"
     print("Path to file :\t " +pathToFile)
 
