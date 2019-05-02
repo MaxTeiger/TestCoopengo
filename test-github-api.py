@@ -6,8 +6,8 @@ import base64
 
 # retrieve 
 REPO = 'TestCoopengo'
-PR = 31
-GH_TOKEN = 'apikey'
+PR = 37
+GH_TOKEN = '8b60c86505bc4c46c9725e8559e1bcc38d096d57'
 
 # Initialize GH information for api (template)
 GH_URL_PULL = 'https://api.github.com/repos/MaxTeiger/{repo}/pulls/{pr}'
@@ -89,7 +89,7 @@ set_gh_pull()
 set_gh_issue()
 set_gh_labels()
 get_gh_commits()
-get_spec_gh_commit(0)
+
 
 print('GH PULL INFO : ')
 print(gh_pull)
@@ -114,6 +114,8 @@ print("\n\n\n")
 print("GH COMMITS INFO")
 print(gh_commits)
 print("\n\n\n")
+
+get_spec_gh_commit(len(gh_commits)-1)
 
 print("GH SPEC COMMIT INFO :")
 print(gh_commit)
