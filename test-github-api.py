@@ -115,7 +115,19 @@ for name, content_url in gh_filesInfo.items():
         gh_filesInfo.pop(name)
     else:
         print("-------------------\nFilename :\t" +name +"\nContent URL :\t" +content_url)
+        
+        
+        r = requests.get(content_url, headers=GH_HEADERS)
+
+        if r.status_code < 200 or r.status_code > 300:
+            
+            print(('error:gh:{}:{}:{}'.format(url, r.status_code, r.text)))
+            sys.exit(1)
+        
+        print(base64.b64decode(r.json()['content']))
+
 print("\n\n\n")
+
 
 # print(base64.b64decode(get_gh_file_content()['content']))
 # print("\n\n\n")
