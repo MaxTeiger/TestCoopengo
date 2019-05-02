@@ -7,7 +7,7 @@ import base64
 # retrieve 
 REPO = 'TestCoopengo'
 PR = 37
-GH_TOKEN = '8b60c86505bc4c46c9725e8559e1bcc38d096d57'
+GH_TOKEN = ''
 
 # Initialize GH information for api (template)
 GH_URL_PULL = 'https://api.github.com/repos/MaxTeiger/{repo}/pulls/{pr}'
@@ -49,12 +49,18 @@ def set_gh_labels():
 
 # informations about files changed in the pull request 
 def get_gh_files():
+    global gh_filesInfo
+    gh_filesInfo = dict()
     url = (GH_URL_PULL + '/files').format(repo=REPO, pr=PR)
     r = requests.get(url, headers=GH_HEADERS)
     if r.status_code < 200 or r.status_code > 300:
         print(('error:gh:{}:{}:{}'.format(url, r.status_code, r.text)))
         sys.exit(1)
-    return r.json()
+    gh_files = r.json()
+
+    for f in gh_files:
+        gh_filesInfo[f['filename']] = f['contents_url']
+    
 
 def get_gh_file_content():
     url = ('https://api.github.com/repos/MaxTeiger/TestCoopengo/contents/README.md').format(repo=REPO, pr=PR)
@@ -89,7 +95,7 @@ set_gh_pull()
 set_gh_issue()
 set_gh_labels()
 get_gh_commits()
-
+get_gh_files()
 
 print('GH PULL INFO : ')
 print(gh_pull)
@@ -102,24 +108,23 @@ print("\n\n\n")
 print('GH LABELS')
 print(gh_labels)
 print("\n\n\n")
-
+  
 print("GH FILES INFO")
-print(get_gh_files())
+for name, content_url in gh_filesInfo.items():
+    if ".md" not in name:
+        gh_filesInfo.pop(name)
+    else:
+        print("-------------------\nFilename :\t" +name +"\nContent URL :\t" +content_url)
 print("\n\n\n")
-
 
 # print(base64.b64decode(get_gh_file_content()['content']))
 # print("\n\n\n")
 
-print("GH COMMITS INFO")
-print(gh_commits)
-print("\n\n\n")
+# print("GH COMMITS INFO")
+# print(gh_commits)
+# print("\n\n\n")
 
-get_spec_gh_commit(len(gh_commits)-1)
+# get_spec_gh_commit(len(gh_commits)-1)
 
-print("GH SPEC COMMIT INFO :")
-print(gh_commit)
-
-
-
-
+# print("GH SPEC COMMIT INFO :")
+# print(gh_commit)
