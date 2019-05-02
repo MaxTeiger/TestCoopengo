@@ -6,8 +6,8 @@ import base64
 
 # retrieve 
 REPO = 'TestCoopengo'
-PR = 37
-GH_TOKEN = 'githubtoken'
+PR = 31
+GH_TOKEN = 'apikey'
 
 # Initialize GH information for api (template)
 GH_URL_PULL = 'https://api.github.com/repos/MaxTeiger/{repo}/pulls/{pr}'
@@ -17,6 +17,10 @@ GH_HEADERS = {'Authorization': 'Bearer {}'.format(GH_TOKEN)}
 gh_pull=None
 gh_issue=None
 gh_labels=None
+gh_commits=None
+gh_commit=None
+
+
 def set_gh_pull():
     url = GH_URL_PULL.format(repo=REPO, pr=PR)
     r = requests.get(url, headers=GH_HEADERS)
@@ -60,21 +64,59 @@ def get_gh_file_content():
         sys.exit(1)
     return r.json()
 
+def get_gh_commits():
+    global gh_pull, gh_commits
+    url = gh_pull['_links']['commits']['href']
+    r = requests.get(url, headers=GH_HEADERS)    
+    if r.status_code < 200 or r.status_code > 300:
+        print(('error:gh:{}:{}:{}'.format(url, r.status_code, r.text)))
+        sys.exit(1)
+    
+    gh_commits=r.json()
+
+def get_spec_gh_commit(commit_number):
+    global gh_commits, gh_commit
+    url = gh_commits[commit_number]['url']
+    r = requests.get(url, headers=GH_HEADERS)    
+    if r.status_code < 200 or r.status_code > 300:
+        print(('error:gh:{}:{}:{}'.format(url, r.status_code, r.text)))
+        sys.exit(1)
+    
+    gh_commit=r.json()
+
+
 set_gh_pull()
 set_gh_issue()
 set_gh_labels()
+get_gh_commits()
+get_spec_gh_commit(0)
 
-
-
+print('GH PULL INFO : ')
 print(gh_pull)
 print("\n\n\n")
+
+print('GH ISSUES INFO')
 print(gh_issue)
 print("\n\n\n")
+
+print('GH LABELS')
 print(gh_labels)
 print("\n\n\n")
+
+print("GH FILES INFO")
 print(get_gh_files())
 print("\n\n\n")
-print(base64.b64decode(get_gh_file_content()['content']))
+
+
+# print(base64.b64decode(get_gh_file_content()['content']))
+# print("\n\n\n")
+
+print("GH COMMITS INFO")
+print(gh_commits)
+print("\n\n\n")
+
+print("GH SPEC COMMIT INFO :")
+print(gh_commit)
 
 
 

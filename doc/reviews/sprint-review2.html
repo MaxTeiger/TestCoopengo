@@ -1,0 +1,644 @@
+
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <style>
+        h1 {
+            font-size: 150%;
+        }
+
+        h2 {
+            font-size: 120%;
+        }
+
+        table {
+            border: #ccc 1px solid table-layout: fixed;
+            width: 600px;
+            border-width: 1px;
+            border-color: #666666;
+            border-collapse: collapse;
+            border-spacing: 10px;
+            /* margin-left: auto;
+            margin-right: auto; */
+        }
+
+        th {
+            font-size: 90%;
+            border-width: 1px;
+            padding: 5px;
+            border-style: solid;
+            border-color: #666666;
+            background-color: #dedede;
+        }
+
+        td {
+            font-size: 80%;
+            border-width: 1px;
+            vertical-align: middle;
+            padding: 2px;
+            border-style: solid;
+            border-color: #666666;
+            background-color: #ffffff;
+
+        }
+
+        tr td:first-child {
+            width: 70px;
+        }
+
+        tr td:last-child {
+            width: 40px;
+        }
+
+        .content {
+            height: 16px;
+            width: auto;
+            overflow: hidden;
+        }
+
+        input[type='checkbox'] {
+            visibility: hidden;
+            position: absolute;
+        }
+
+        input[type='checkbox']:checked+.content {
+            height: 80%;
+        }
+    </style>
+</head>
+
+<body>
+    <h2>Version: sprint</h2>
+    <p>Livraison en recette: </p>
+    <p>Livraison en production: </p>
+
+    
+
+
+    <!-- Features -->
+    
+    <h2>1. Fonctionnalités</h2>
+    
+    <table>
+        <tr>
+            <th>#</th>
+            <th>Priorité</th>
+            <th>Sujet</th>
+            <th>Version</th>
+        </tr>
+
+        <tr>
+            <td><a href="https://support.coopengo.com/issues/507">507</a></td>
+            <td>Normal</td>
+            <td><label><input type="checkbox" />
+                    <div class="content"><span class="hidden">Infrastructure sur serveur dédié<br></span></div>
+                </label>
+            </td>
+            <td></td>
+        </tr>
+
+        <tr>
+            <td><a href="https://support.coopengo.com/issues/521">521</a></td>
+            <td>Normal</td>
+            <td><label><input type="checkbox" />
+                    <div class="content"><span class="hidden">Full Contract Revision<br><p>Sometimes, we want to change everything on an already active contract.</p>
+<p>This usually only happens in the first days of the contract's life. However, those days are sometimes months, and the contract may have already posted or paid invoices.</p>
+<p>In order to provide an easier to use UI than the standard endorsement wizard, we want to be able to reuse a standard subscription workflow. But, we need to keep in mind that we are working on an existing contract, and that we may want to abort everything at any time.</p>
+<p>Here are the tasks :</p>
+<ul>
+<li>Add a method on contracts to switch back to project. 2hrs</li>
+<li>Add a method on contracts to switch back to latest endorsement. It will be plugged on a button in the process to be able to go back anytime to the previous version. It will also clear the current_state field. 2hrs.</li>
+<li>Update the first_invoice method to delete all existing invoices (and cancel those which where posted / paid). 1hr</li>
+<li>Add a method on contracts for a "total cleanup", which would only leave one version per versioned object. The value to use would be the one of the latest version. This is necessary for some views to work properly, and is consistent with a full modification. 4hrs</li>
+<li>Create default endorsement definitions through xml which will allow to create "void", with or without rebill, endorsements. The main use of those will be the possibility to create snapshots at a given date. 2hrs</li>
+<li>Create an EndorsementState which will :<ul>
+<li>Inform the user that he is about to enter a "special" endorsement and ask for some critical values (contract.effective_date). 1hr</li>
+<li>Create an empty endorsement on the contract (and the loan if appliable), and apply it. 2hrs</li>
+<li>Apply critical values on new version and propagate if needed. 1hr</li>
+<li>Close the wizard and start a new process with the appliable "Full Contract Revision" Process. 4hrs</li>
+</ul>
+</li>
+</ul>
+<p>For loan contracts, some special points :</p>
+<ul>
+<li>We need to snapshot the loan(s) as well before starting the process. The loan may change during the process so it is necessary to be able to rollback properly.</li>
+<li>Maybe we could just recalculate the ContractPremium to avoid having to clear up the already posted / paid invoices. In this case, the "clear all invoices" could happen when "applying" the changes at the end.</li>
+</ul>
+<p>Total estimation (best case) : 19 hours</p>
+</span></div>
+                </label>
+            </td>
+            <td></td>
+        </tr>
+
+        <tr>
+            <td><a href="https://support.coopengo.com/issues/541">541</a></td>
+            <td>Normal</td>
+            <td><label><input type="checkbox" />
+                    <div class="content"><span class="hidden">Performances<br></span></div>
+                </label>
+            </td>
+            <td></td>
+        </tr>
+
+        <tr>
+            <td><a href="https://support.coopengo.com/issues/773">773</a></td>
+            <td>Normal</td>
+            <td><label><input type="checkbox" />
+                    <div class="content"><span class="hidden">Allow to endorse Extra Premiums<br></span></div>
+                </label>
+            </td>
+            <td></td>
+        </tr>
+
+        <tr>
+            <td><a href="https://support.coopengo.com/issues/1215">1215</a></td>
+            <td>Normal</td>
+            <td><label><input type="checkbox" />
+                    <div class="content"><span class="hidden">Add _calculate_method and use it in calculate to allow easy customization in modules<br></span></div>
+                </label>
+            </td>
+            <td></td>
+        </tr>
+
+        <tr>
+            <td><a href="https://support.coopengo.com/issues/1303">1303</a></td>
+            <td>Normal</td>
+            <td><label><input type="checkbox" />
+                    <div class="content"><span class="hidden">Allow to configure Json export<br><p>Add configuration object to store model and fields that need to be exported</p>
+</span></div>
+                </label>
+            </td>
+            <td></td>
+        </tr>
+
+        <tr>
+            <td><a href="https://support.coopengo.com/issues/1217">1217</a></td>
+            <td>Normal</td>
+            <td><label><input type="checkbox" />
+                    <div class="content"><span class="hidden">Manage at signature date frequency<br><p>Generate invoice at contract signature</p>
+</span></div>
+                </label>
+            </td>
+            <td></td>
+        </tr>
+
+        <tr>
+            <td><a href="https://support.coopengo.com/issues/496">496</a></td>
+            <td>Normal</td>
+            <td><label><input type="checkbox" />
+                    <div class="content"><span class="hidden">Change Start Date Endorsement<br><p>We need to provide a way to change the start_date of the contract, and to propagate it to all entities (options, premium, shares, extra_premiums, etc...).</p>
+<p>The proposed design is :</p>
+<ul>
+<li>Add the possibility for an endorsement_part to trigger calls to a list of methods after data modification</li>
+<li>Provide a EndorsementStep to manage contract start_date modification</li>
+<li>Add a method (based on contract.set_start_date) that would propagate the contract' start date to all linked entities.</li>
+</ul>
+<p>This could be mixed with the loan endorsement for changing funds_release_date, which would basically automatically create the contract endorsement and trigger contract.update_start_date for all related contract.</p>
+<p>I do not see how this endorsement can be properly mixed with other contract modifications, as the contract_start_date is on the critical path for contract modification (rules may depend on it, etc...), and modifying it should erase all functional versionning. So only non-versioned data could be changed. However, loan-based modifications could be allowed.</p>
+<p>Another option would be to propagate in the endorsement itself the modifications (create modifications on options / covered_elements / etc...), but it would be difficult to make sure everything was properly changed (as we cannot rely on the wizard's code). The advantage would be a clearer summary.</p>
+</span></div>
+                </label>
+            </td>
+            <td></td>
+        </tr>
+
+        <tr>
+            <td><a href="https://support.coopengo.com/issues/498">498</a></td>
+            <td>Immediate</td>
+            <td><label><input type="checkbox" />
+                    <div class="content"><span class="hidden">Correction d'issues<br></span></div>
+                </label>
+            </td>
+            <td></td>
+        </tr>
+
+    </table>
+
+
+    <!-- Bugs -->
+    
+    <h2>2. Anomalies</h2>
+    
+    <table>
+        <tr>
+            <th>#</th>
+            <th>Priorité</th>
+            <th>Sujet</th>
+            <th>Version</th>
+        </tr>
+
+        <tr>
+            <td><a href="https://support.coopengo.com/issues/505">505</a></td>
+            <td>Normal</td>
+            <td><label><input type="checkbox" />
+                    <div class="content"><span class="hidden">Synchronier les dépôts du serveur avec les dépôts bitbucket</span></div>
+                </label></td>
+            <td></td>
+        </tr>
+
+        <tr>
+            <td><a href="https://support.coopengo.com/issues/551">551</a></td>
+            <td>Normal</td>
+            <td><label><input type="checkbox" />
+                    <div class="content"><span class="hidden">confgure redmine to update issues by email</span></div>
+                </label></td>
+            <td></td>
+        </tr>
+
+        <tr>
+            <td><a href="https://support.coopengo.com/issues/506">506</a></td>
+            <td>Normal</td>
+            <td><label><input type="checkbox" />
+                    <div class="content"><span class="hidden">Automatiser le backup de la machine virtuelle</span></div>
+                </label></td>
+            <td></td>
+        </tr>
+
+        <tr>
+            <td><a href="https://support.coopengo.com/issues/490">490</a></td>
+            <td>Normal</td>
+            <td><label><input type="checkbox" />
+                    <div class="content"><span class="hidden">Rédiger une proposition / description de workflow.</span></div>
+                </label></td>
+            <td></td>
+        </tr>
+
+        <tr>
+            <td><a href="https://support.coopengo.com/issues/499">499</a></td>
+            <td>Normal</td>
+            <td><label><input type="checkbox" />
+                    <div class="content"><span class="hidden">Rédiger les guides d'installation de redmine, hgweb et hgssh</span></div>
+                </label></td>
+            <td></td>
+        </tr>
+
+        <tr>
+            <td><a href="https://support.coopengo.com/issues/554">554</a></td>
+            <td>Normal</td>
+            <td><label><input type="checkbox" />
+                    <div class="content"><span class="hidden">Update contract loan invoice : generate_premium_amount may have to ignore existing invoices</span></div>
+                </label></td>
+            <td></td>
+        </tr>
+
+        <tr>
+            <td><a href="https://support.coopengo.com/issues/522">522</a></td>
+            <td>Normal</td>
+            <td><label><input type="checkbox" />
+                    <div class="content"><span class="hidden">Calculate prices not working properly with multiple contracts</span></div>
+                </label></td>
+            <td></td>
+        </tr>
+
+        <tr>
+            <td><a href="https://support.coopengo.com/issues/518">518</a></td>
+            <td>Normal</td>
+            <td><label><input type="checkbox" />
+                    <div class="content"><span class="hidden">Documenter le workflow et l'infrastucture en anglais</span></div>
+                </label></td>
+            <td></td>
+        </tr>
+
+        <tr>
+            <td><a href="https://support.coopengo.com/issues/584">584</a></td>
+            <td>Normal</td>
+            <td><label><input type="checkbox" />
+                    <div class="content"><span class="hidden">Crash when calculating premiums : maximum recursion </span></div>
+                </label></td>
+            <td></td>
+        </tr>
+
+        <tr>
+            <td><a href="https://support.coopengo.com/issues/527">527</a></td>
+            <td>Normal</td>
+            <td><label><input type="checkbox" />
+                    <div class="content"><span class="hidden">Add a method to switch a contract back to status project</span></div>
+                </label></td>
+            <td></td>
+        </tr>
+
+        <tr>
+            <td><a href="https://support.coopengo.com/issues/531">531</a></td>
+            <td>Normal</td>
+            <td><label><input type="checkbox" />
+                    <div class="content"><span class="hidden">Add a clean_up  method on contracts</span></div>
+                </label></td>
+            <td></td>
+        </tr>
+
+        <tr>
+            <td><a href="https://support.coopengo.com/issues/528">528</a></td>
+            <td>Normal</td>
+            <td><label><input type="checkbox" />
+                    <div class="content"><span class="hidden">Add a method to switch a contract back to the previous endorsement</span></div>
+                </label></td>
+            <td></td>
+        </tr>
+
+        <tr>
+            <td><a href="https://support.coopengo.com/issues/530">530</a></td>
+            <td>Normal</td>
+            <td><label><input type="checkbox" />
+                    <div class="content"><span class="hidden">Create default "void" endorsement parts through xml</span></div>
+                </label></td>
+            <td></td>
+        </tr>
+
+        <tr>
+            <td><a href="https://support.coopengo.com/issues/532">532</a></td>
+            <td>Normal</td>
+            <td><label><input type="checkbox" />
+                    <div class="content"><span class="hidden">Create CleanContract endorsement state.</span></div>
+                </label></td>
+            <td></td>
+        </tr>
+
+        <tr>
+            <td><a href="https://support.coopengo.com/issues/557">557</a></td>
+            <td>Normal</td>
+            <td><label><input type="checkbox" />
+                    <div class="content"><span class="hidden">Fix contract pemium / contract premium amount restore history.</span></div>
+                </label></td>
+            <td></td>
+        </tr>
+
+        <tr>
+            <td><a href="https://support.coopengo.com/issues/752">752</a></td>
+            <td>Normal</td>
+            <td><label><input type="checkbox" />
+                    <div class="content"><span class="hidden">Countries are no longer created via xml in tests.</span></div>
+                </label></td>
+            <td></td>
+        </tr>
+
+        <tr>
+            <td><a href="https://support.coopengo.com/issues/764">764</a></td>
+            <td>Normal</td>
+            <td><label><input type="checkbox" />
+                    <div class="content"><span class="hidden">Add setter on contract => end_date field</span></div>
+                </label></td>
+            <td></td>
+        </tr>
+
+        <tr>
+            <td><a href="https://support.coopengo.com/issues/520">520</a></td>
+            <td>Normal</td>
+            <td><label><input type="checkbox" />
+                    <div class="content"><span class="hidden">Fermer automatiquement les issues rietveld quand un commit mentionnant la revue en question est poussé sur le repo.</span></div>
+                </label></td>
+            <td></td>
+        </tr>
+
+        <tr>
+            <td><a href="https://support.coopengo.com/issues/753">753</a></td>
+            <td>Normal</td>
+            <td><label><input type="checkbox" />
+                    <div class="content"><span class="hidden">Make sure end_date is properly calculated from loans if loan contract.</span></div>
+                </label></td>
+            <td></td>
+        </tr>
+
+        <tr>
+            <td><a href="https://support.coopengo.com/issues/588">588</a></td>
+            <td>Normal</td>
+            <td><label><input type="checkbox" />
+                    <div class="content"><span class="hidden">endorsement : Add 'in-progress' state and rollback_date on endorsements, to properly manage double step application.</span></div>
+                </label></td>
+            <td></td>
+        </tr>
+
+        <tr>
+            <td><a href="https://support.coopengo.com/issues/594">594</a></td>
+            <td>Normal</td>
+            <td><label><input type="checkbox" />
+                    <div class="content"><span class="hidden">Add a method to apply "in_progress" endorsement</span></div>
+                </label></td>
+            <td></td>
+        </tr>
+
+        <tr>
+            <td><a href="https://support.coopengo.com/issues/583">583</a></td>
+            <td>Normal</td>
+            <td><label><input type="checkbox" />
+                    <div class="content"><span class="hidden">Make sure contract is properly locked when applying / drafting endorsement if a process is currently running.</span></div>
+                </label></td>
+            <td></td>
+        </tr>
+
+        <tr>
+            <td><a href="https://support.coopengo.com/issues/595">595</a></td>
+            <td>Normal</td>
+            <td><label><input type="checkbox" />
+                    <div class="content"><span class="hidden">Check there cannot be more than one "in-progress" endorsement on a given object at any time.</span></div>
+                </label></td>
+            <td></td>
+        </tr>
+
+        <tr>
+            <td><a href="https://support.coopengo.com/issues/765">765</a></td>
+            <td>Normal</td>
+            <td><label><input type="checkbox" />
+                    <div class="content"><span class="hidden">Loan performance issue with on_change</span></div>
+                </label></td>
+            <td></td>
+        </tr>
+
+        <tr>
+            <td><a href="https://support.coopengo.com/issues/789">789</a></td>
+            <td>Normal</td>
+            <td><label><input type="checkbox" />
+                    <div class="content"><span class="hidden">test</span></div>
+                </label></td>
+            <td></td>
+        </tr>
+
+        <tr>
+            <td><a href="https://support.coopengo.com/issues/781">781</a></td>
+            <td>Normal</td>
+            <td><label><input type="checkbox" />
+                    <div class="content"><span class="hidden">Add searcher on parent_contract on options</span></div>
+                </label></td>
+            <td></td>
+        </tr>
+
+        <tr>
+            <td><a href="https://support.coopengo.com/issues/782">782</a></td>
+            <td>Normal</td>
+            <td><label><input type="checkbox" />
+                    <div class="content"><span class="hidden">Add all_premium field on contract</span></div>
+                </label></td>
+            <td></td>
+        </tr>
+
+        <tr>
+            <td><a href="https://support.coopengo.com/issues/785">785</a></td>
+            <td>Normal</td>
+            <td><label><input type="checkbox" />
+                    <div class="content"><span class="hidden">Use contract.all_premium field, replaces get_invoice_lines for sub-entities, as well as get_premium_list</span></div>
+                </label></td>
+            <td></td>
+        </tr>
+
+        <tr>
+            <td><a href="https://support.coopengo.com/issues/766">766</a></td>
+            <td>Normal</td>
+            <td><label><input type="checkbox" />
+                    <div class="content"><span class="hidden">Fix loan endorsements view</span></div>
+                </label></td>
+            <td></td>
+        </tr>
+
+        <tr>
+            <td><a href="https://support.coopengo.com/issues/767">767</a></td>
+            <td>Normal</td>
+            <td><label><input type="checkbox" />
+                    <div class="content"><span class="hidden">Allow to modify contract start date after modifying a loan.</span></div>
+                </label></td>
+            <td></td>
+        </tr>
+
+        <tr>
+            <td><a href="https://support.coopengo.com/issues/798">798</a></td>
+            <td>Normal</td>
+            <td><label><input type="checkbox" />
+                    <div class="content"><span class="hidden">Move in a separate module</span></div>
+                </label></td>
+            <td></td>
+        </tr>
+
+        <tr>
+            <td><a href="https://support.coopengo.com/issues/774">774</a></td>
+            <td>Normal</td>
+            <td><label><input type="checkbox" />
+                    <div class="content"><span class="hidden">Add ExtraPremium Endorsement configuration</span></div>
+                </label></td>
+            <td></td>
+        </tr>
+
+        <tr>
+            <td><a href="https://support.coopengo.com/issues/779">779</a></td>
+            <td>Normal</td>
+            <td><label><input type="checkbox" />
+                    <div class="content"><span class="hidden">Create EndorsementExtraPremium Data Structure</span></div>
+                </label></td>
+            <td></td>
+        </tr>
+
+        <tr>
+            <td><a href="https://support.coopengo.com/issues/817">817</a></td>
+            <td>Normal</td>
+            <td><label><input type="checkbox" />
+                    <div class="content"><span class="hidden">Create Manage Extra Premium endorsement step</span></div>
+                </label></td>
+            <td></td>
+        </tr>
+
+        <tr>
+            <td><a href="https://support.coopengo.com/issues/497">497</a></td>
+            <td>Normal</td>
+            <td><label><input type="checkbox" />
+                    <div class="content"><span class="hidden">issue 400 Les paliers ne sont plus correctement initialisés en emprunteur</span></div>
+                </label></td>
+            <td></td>
+        </tr>
+
+        <tr>
+            <td><a href="https://support.coopengo.com/issues/772">772</a></td>
+            <td>Normal</td>
+            <td><label><input type="checkbox" />
+                    <div class="content"><span class="hidden">Calculating invoices on contracts with large number of premium lines is  very long</span></div>
+                </label></td>
+            <td></td>
+        </tr>
+
+        <tr>
+            <td><a href="https://support.coopengo.com/issues/967">967</a></td>
+            <td>Normal</td>
+            <td><label><input type="checkbox" />
+                    <div class="content"><span class="hidden">Allow 'other' as kind for billing account</span></div>
+                </label></td>
+            <td></td>
+        </tr>
+
+        <tr>
+            <td><a href="https://support.coopengo.com/issues/1402">1402</a></td>
+            <td>Normal</td>
+            <td><label><input type="checkbox" />
+                    <div class="content"><span class="hidden">Crash when insurance_fund_number is not defined when importing via web service</span></div>
+                </label></td>
+            <td></td>
+        </tr>
+
+        <tr>
+            <td><a href="https://support.coopengo.com/issues/1405">1405</a></td>
+            <td>Normal</td>
+            <td><label><input type="checkbox" />
+                    <div class="content"><span class="hidden">Wrong calculation of premium for extra premium defined as percentage</span></div>
+                </label></td>
+            <td></td>
+        </tr>
+
+        <tr>
+            <td><a href="https://support.coopengo.com/issues/514">514</a></td>
+            <td>High</td>
+            <td><label><input type="checkbox" />
+                    <div class="content"><span class="hidden">Crash when displaying the option widget (tree+form)</span></div>
+                </label></td>
+            <td></td>
+        </tr>
+
+        <tr>
+            <td><a href="https://support.coopengo.com/issues/538">538</a></td>
+            <td>High</td>
+            <td><label><input type="checkbox" />
+                    <div class="content"><span class="hidden">contract.premium.amount not deleted when recalculation is done</span></div>
+                </label></td>
+            <td></td>
+        </tr>
+
+        <tr>
+            <td><a href="https://support.coopengo.com/issues/548">548</a></td>
+            <td>High</td>
+            <td><label><input type="checkbox" />
+                    <div class="content"><span class="hidden">Properly manage relation between contract details and invoice lines</span></div>
+                </label></td>
+            <td></td>
+        </tr>
+
+        <tr>
+            <td><a href="https://support.coopengo.com/issues/555">555</a></td>
+            <td>High</td>
+            <td><label><input type="checkbox" />
+                    <div class="content"><span class="hidden">Endorsements should create two invoices, splitting the effective_date invoice period in two.</span></div>
+                </label></td>
+            <td></td>
+        </tr>
+
+        <tr>
+            <td><a href="https://support.coopengo.com/issues/549">549</a></td>
+            <td>Immediate</td>
+            <td><label><input type="checkbox" />
+                    <div class="content"><span class="hidden">Loan creation/modification from contract</span></div>
+                </label></td>
+            <td></td>
+        </tr>
+
+        <tr>
+            <td><a href="https://support.coopengo.com/issues/571">571</a></td>
+            <td>Immediate</td>
+            <td><label><input type="checkbox" />
+                    <div class="content"><span class="hidden">Impossible to post an invoice</span></div>
+                </label></td>
+            <td></td>
+        </tr>
+
+    </table>
+  
+  
+    <!-- Parameters -->
+
+</body>
+</html>
+ 
