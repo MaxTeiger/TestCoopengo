@@ -1,0 +1,171 @@
+<%! 
+    import mistune
+%>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <style>
+        h1 {
+            font-size: 150%;
+        }
+
+        h2 {
+            font-size: 120%;
+        }
+
+        table {
+            border: #ccc 1px solid table-layout: fixed;
+            width: 600px;
+            border-width: 1px;
+            border-color: #666666;
+            border-collapse: collapse;
+            border-spacing: 10px;
+            /* margin-left: auto;
+            margin-right: auto; */
+        }
+
+        th {
+            font-size: 90%;
+            border-width: 1px;
+            padding: 5px;
+            border-style: solid;
+            border-color: #666666;
+            background-color: #dedede;
+        }
+
+        td {
+            font-size: 80%;
+            border-width: 1px;
+            vertical-align: middle;
+            padding: 2px;
+            border-style: solid;
+            border-color: #666666;
+            background-color: #ffffff;
+
+        }
+
+        tr td:first-child {
+            width: 70px;
+        }
+
+        tr td:last-child {
+            width: 40px;
+        }
+
+        .content {
+            height: 16px;
+            width: auto;
+            overflow: hidden;
+        }
+
+        input[type='checkbox'] {
+            visibility: hidden;
+            position: absolute;
+        }
+
+        input[type='checkbox']:checked+.content {
+            height: 80%;
+        }
+    </style>
+</head>
+
+<body>
+    <h2>Version: ${version_name}</h2>
+    <p>Livraison en recette: ${livraison_recette}</p>
+    <p>Livraison en production: ${livraison_production}</p>
+
+    <% count = 0
+    %>
+
+
+    <!-- Features -->
+    % if len(featuresIssues)!=0:
+    <% count +=1
+    %>
+    <h2>${count}. Fonctionnalités</h2>
+    
+    <table>
+        <tr>
+            <th>#</th>
+            <th>Priorité</th>
+            <th>Sujet</th>
+            <th>Version</th>
+        </tr>
+
+        % for issue in featuresIssues:
+        <tr>
+            <td><a href="https://support.coopengo.com/issues/${issue['id']}">${issue['id']}</a></td>
+            <td>${issue['priority']['name']}</td>
+            <td><label><input type="checkbox" />
+                    <div class="content"><span class="hidden">${issue['subject']}<br>${mistune.markdown(issue['description'])}</span></div>
+                </label>
+            </td>
+            <td></td>
+        </tr>
+
+        % endfor
+    </table>
+    % endif
+
+
+    <!-- Bugs -->
+    % if len(bugsIssues)!=0:
+    <% count +=1
+    %>
+    <h2>${count}. Anomalies</h2>
+    
+    <table>
+        <tr>
+            <th>#</th>
+            <th>Priorité</th>
+            <th>Sujet</th>
+            <th>Version</th>
+        </tr>
+
+        % for issue in bugsIssues:
+        <tr>
+            <td><a href="https://support.coopengo.com/issues/${issue['id']}">${issue['id']}</a></td>
+            <td>${issue['priority']['name']}</td>
+            <td><label><input type="checkbox" />
+                    <div class="content"><span class="hidden">${issue['subject']}</span></div>
+                </label></td>
+            <td>${issue['custom_fields'][11]}</td>
+        </tr>
+
+        % endfor
+    </table>
+    % endif
+  
+  
+    <!-- Parameters -->
+    % if len(paramsIssues)!=0:
+    <% count +=1
+    %>
+    <h2>${count}. Fonctionnalités</h2>
+    
+    <table>
+        <tr>
+            <th>#</th>
+            <th>Priorité</th>
+            <th>Sujet</th>
+            <th>Version</th>
+        </tr>
+
+        % for issue in paramsIssues:
+        <tr>
+            <td><a href="https://support.coopengo.com/issues/${issue['id']}">${issue['id']}</a></td>
+            <td>${issue['priority']['name']}</td>
+            <td><label><input type="checkbox" />
+                    <div class="content"><span class="hidden">${issue['subject']}</span></div>
+                </label></td>
+            <td>${issue['custom_fields'][11]}</td>
+        </tr>
+
+        % endfor
+    </table>
+    % endif
+
+</body>
+</html>
+ 
