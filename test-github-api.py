@@ -3,10 +3,14 @@
 import requests
 import sys
 import base64
+import re 
+
+
+
 
 # retrieve 
 REPO = 'TestCoopengo'
-PR = 37
+PR = 39
 GH_TOKEN = ''
 
 # Initialize GH information for api (template)
@@ -19,6 +23,8 @@ gh_issue=None
 gh_labels=None
 gh_commits=None
 gh_commit=None
+
+body_regexp = re.compile('.*(fix|ref) #(\d+)')
 
 
 def set_gh_pull():
@@ -70,36 +76,48 @@ def get_gh_file_content():
         sys.exit(1)
     return r.json()
 
-def get_gh_commits():
-    global gh_pull, gh_commits
-    url = gh_pull['_links']['commits']['href']
-    r = requests.get(url, headers=GH_HEADERS)    
-    if r.status_code < 200 or r.status_code > 300:
-        print(('error:gh:{}:{}:{}'.format(url, r.status_code, r.text)))
-        sys.exit(1)
-    
-    gh_commits=r.json()
 
-def get_spec_gh_commit(commit_number):
-    global gh_commits, gh_commit
-    url = gh_commits[commit_number]['url']
-    r = requests.get(url, headers=GH_HEADERS)    
-    if r.status_code < 200 or r.status_code > 300:
-        print(('error:gh:{}:{}:{}'.format(url, r.status_code, r.text)))
-        sys.exit(1)
+# def get_gh_commits():
+#     global gh_pull, gh_commits
+#     url = gh_pull['_links']['commits']['href']
+#     r = requests.get(url, headers=GH_HEADERS)    
+#     if r.status_code < 200 or r.status_code > 300:
+#         print(('error:gh:{}:{}:{}'.format(url, r.status_code, r.text)))
+#         sys.exit(1)
     
-    gh_commit=r.json()
+#     gh_commits=r.json()
+
+# def get_spec_gh_commit(commit_number):
+#     global gh_commits, gh_commit
+#     url = gh_commits[commit_number]['url']
+#     r = requests.get(url, headers=GH_HEADERS)    
+#     if r.status_code < 200 or r.status_code > 300:
+#         print(('error:gh:{}:{}:{}'.format(url, r.status_code, r.text)))
+#         sys.exit(1)
+    
+#     gh_commit=r.json()
+
+
 
 
 set_gh_pull()
 set_gh_issue()
 set_gh_labels()
-get_gh_commits()
+#get_gh_commits()
 get_gh_files()
 
+m = body_regexp.match(gh_pull['body'])
+if m:
+    rm_issue = int(m.group(2))
+    print('REDMINE ISSUE NUMBER : ')
+    print(rm_issue)
+    print("\n\n\n")
+
 print('GH PULL INFO : ')
-print(gh_pull)
+print(gh_pull['body'])
 print("\n\n\n")
+
+
 
 print('GH ISSUES INFO')
 print(gh_issue)
@@ -109,9 +127,13 @@ print('GH LABELS')
 print(gh_labels)
 print("\n\n\n")
   
+
+
+print("GH FILES INFO")
+print("")
 print("GH FILES INFO")
 for name, content_url in gh_filesInfo.items():
-    if ".md" not in name:
+    if str(rm_issue) +".md" not in name:
         gh_filesInfo.pop(name)
     else:
         print("-------------------\nFilename :\t" +name +"\nContent URL :\t" +content_url)
