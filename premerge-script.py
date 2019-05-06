@@ -68,25 +68,3 @@ for fileName in fileNames:
         else:
             repo.delete_file(contentToDelete.path, "Remove "+fileName, contentToDelete.sha, pr.head.ref)
             print("\tOK !")
-
-
-
-
-
-
-# Delete files from GitHub
-# Good
-
-# for repo in g.get_user().get_repos():
-#     if repo.name == REPO:
-#         print('Great found the repo: ' +repo.name)
-#         break
-
-
-
-
-# def main():
-
-
-# if __name__ == '__main__':
-#     main()
