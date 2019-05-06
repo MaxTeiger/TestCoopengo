@@ -13,43 +13,24 @@ import base64
 # after Drone as cloned the project
 
 REPO = 'TestCoopengo'
-PR = 39
+PR = 40
 GH_TOKEN = os.environ['GITHUB_TOKEN']
 
 
 RM_URL = 'https://support.coopengo.com/'
 RM_TOKEN = os.environ['REDMINE_TOKEN']
 
-
-filePath = "doc/issues/{issueId}.md"
-
-
-body_regexp = re.compile('.*(fix|ref) #(\d+)', re.M | re.I | re.S)
-
-print('Trying to connect...')
+print('Trying to connect to GitHub...')
 # or using an access token
 g = Github(GH_TOKEN)
 print('Connected ! \nRetrieving ' +REPO +'...', end='')
-
 repo = g.get_user().get_repo(REPO)
 print("\tOK !")
 
 print("Retrieving pull request #" +str(PR), end='')
 pr = repo.get_pull(PR)    
 print("\tOK !")
-
-
-
-m = body_regexp.match(pr.body)
-if m:
-    # retrieve ticket number (issue number)
-    issue = int(m.group(2))
-    print("Pull request for issue : " +str(issue) +"\tOK !")
-else:
-    print("Body of the pull request not matching")
-    sys.exit(1)
-
-
+    
 
 fileNames = []
 for file in pr.get_files():
@@ -70,8 +51,9 @@ for fileName in fileNames:
 
         print("\nRetrieving the file...", end='')
         # Retrieve content of relative file
-        content = base64.b64decode(repo.get_contents(fileName).content)
+        content = base64.b64decode(repo.get_contents(fileName, ref=pr.head.ref).content)
         content = content.decode('utf8')
+        
         print("\t\tOK !")
 
         print("Update issue " +str(issueId) +"...", end='')
@@ -79,13 +61,14 @@ for fileName in fileNames:
         print("\t\tOK !")
 
         print("Delete file from Github...", end='')
-        contentToDelete = repo.get_contents(fileName)
+        contentToDelete = repo.get_contents(fileName, ref=pr.head.ref)
 
-        if pr.is_merged: 
+        if pr.is_merged(): 
             print("\nThis pull request is already merged, impossible to delete file...")
         else:
-            repo.delete_file(contentToDelete.path, "Remove "+fileName, contentToDelete.sha, pr.title)
+            repo.delete_file(contentToDelete.path, "Remove "+fileName, contentToDelete.sha, pr.head.ref)
             print("\tOK !")
+
 
 
 
