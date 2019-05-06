@@ -128,7 +128,7 @@
             <td><a href="https://support.coopengo.com/issues/${issue['id']}">${issue['id']}</a></td>
             <td>${issue['priority']['name']}</td>
             <td><label><input type="checkbox" />
-                    <div class="content"><span class="hidden">${issue['subject']}</span></div>
+                    <div class="content"><span class="hidden">${issue['subject']}<br>${mistune.markdown(issue['description'])}</span></div>
                 </label></td>
             <td>${issue['custom_fields'][11]}</td>
         </tr>
@@ -157,7 +157,34 @@
             <td><a href="https://support.coopengo.com/issues/${issue['id']}">${issue['id']}</a></td>
             <td>${issue['priority']['name']}</td>
             <td><label><input type="checkbox" />
-                    <div class="content"><span class="hidden">${issue['subject']}</span></div>
+                    <div class="content"><span class="hidden">${issue['subject']}<br>${mistune.markdown(issue['description'])}</span></div>
+                </label></td>
+            <td>${issue['custom_fields'][11]}</td>
+        </tr>
+
+        % endfor
+    </table>
+    % endif
+
+    <!-- Scripts -->
+    % if len(scriptIssues)!=0:
+    <% count +=1
+    %>
+    <h2>${count}. Scripts</h2>
+    
+    <table>
+        <tr>
+            <th>#</th>
+            <th>Sujet/Scripts</th>
+            <th>Version</th>
+        </tr>
+
+        % for issue in scriptIssues:
+        <tr>
+            <td><a href="https://support.coopengo.com/issues/${issue['id']}">${issue['id']}</a></td>
+            <td><label><input type="checkbox" />
+                    <div class="content">
+                        <span class="hidden">${issue['subject']}<br>${mistune.markdown(issue['description'])}</span></div>
                 </label></td>
             <td>${issue['custom_fields'][11]}</td>
         </tr>

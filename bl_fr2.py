@@ -182,7 +182,9 @@ render = template.render_unicode(version_name=version_name,
                                  livraison_production=version['custom_fields'][6],
                                  featuresIssues=features,
                                  bugsIssues=bugs,
-                                 paramsIssues=params).encode('utf-8', 'replace')
+                                 paramsIssues=params,
+                                 scriptIssues=scripts).encode('utf-8', 'replace')
 
 writeFile.write(render)
+
 print("File created :\t" + pathToFile)
