@@ -12,13 +12,13 @@ import base64
 # Retrieve from the environment variables usefull infos
 # after Drone as cloned the project
 
-REPO = os.environ['DRONE_REPO_NAME']
-PR = os.environ['DRONE_PULL_REQUEST']
+REPO = 'TestCoopengo'
+PR = 39
 GH_TOKEN = os.environ['GITHUB_TOKEN']
 GH_HEADERS = {'Authorization': 'Bearer {}'.format(GH_TOKEN)}
 
-GH_URL_PULL = 'https://api.github.com/repos/coopengo/{repo}/pulls/{pr}'
-GH_URL_ISSUE = 'https://api.github.com/repos/coopengo/{repo}/issues/{pr}'
+GH_URL_PULL = 'https://api.github.com/repos/MaxTeiger/{repo}/pulls/{pr}'
+GH_URL_ISSUE = 'https://api.github.com/repos/MaxTeiger/{repo}/issues/{pr}'
 
 # Initialize information for Redmine
 RM_URL = 'https://support.coopengo.com/issues/{issue}.json'
@@ -370,7 +370,7 @@ def check_content():
                         changelog['filename'])))
         else:
             ok = False
-            print('content:' +fd('red') +'ko' +attr(0) +':changelog')
+            print('content:' +fg('red') +'ko' +attr(0) +':changelog')
     return ok
 # 
 def check_redmine():
@@ -390,6 +390,7 @@ def check_redmine():
             # ensure the issue type is the same on redmine
             issue_type = rm_trackers[issue['tracker']['id']]
             real_issue_type = issue_type
+            print(real_issue_type)
 
             #
             if issue_type == rm_issue_type:

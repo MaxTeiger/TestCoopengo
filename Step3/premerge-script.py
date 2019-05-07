@@ -28,7 +28,7 @@ repo = g.get_user().get_repo(REPO)
 print("\tOK !")
 
 print("Retrieving pull request #" +str(PR), end='')
-pr = repo.get_pull(PR)    
+pr = repo.get_pull(int(PR))    
 print("\tOK !")
     
 
