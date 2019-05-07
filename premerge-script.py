@@ -84,10 +84,4 @@ for fileName in fileNames:
             print("\tError : Impossible to delete file")
             continue
 
-
-
-
-
-            
-
     # c'est même possible de merge la pull request après directment depuis le code 

@@ -1,0 +1,48 @@
+#!/bin/bash
+echo "script executed from ${PWD}"
+ls
+
+set -euo pipefail
+IFS=$'\n\t'
+
+# clone using ssh
+repository="git@github.com:MaxTeiger/TestCoopengo.git"
+DIR="$HOME/TestDirectory"
+
+
+if [[ -e $DIR ]]; 
+then
+    echo 'Folder exists'
+    rm -rf $DIR
+    echo 'Folder removed'
+    mkdir $DIR
+    echo 'folder created'
+else
+    mkdir $DIR
+    echo 'Folder created'
+fi
+
+
+if [ "$(ls -A $DIR)" ]; then
+    echo "$DIR is not Empty"
+else
+    echo "$DIR is Empty"
+    git clone "$repository" "$DIR"
+    
+    echo ' '
+    echo '-------------( SCRIPT )---------------'
+    python3 $PWD/update-github.py "$DIR"
+
+    cd $DIR
+
+    echo ' '
+    echo '-------------( UPDATE GITHUB )---------------'
+    git add .
+    git commit -m "Suppression des fichiers issue"
+    git push 
+fi
+#
+
+# localFolder="$HOME"
+
+# git clone "$repository" "$localFolder"

@@ -15,23 +15,40 @@ import base64
 REPO = os.environ['DRONE_REPO_NAME']
 PR = os.environ['DRONE_PULL_REQUEST']
 GH_TOKEN = os.environ['GITHUB_TOKEN']
-RM_TOKEN = os.environ['REDMINE_TOKEN']
+GH_HEADERS = {'Authorization': 'Bearer {}'.format(GH_TOKEN)}
 
 GH_URL_PULL = 'https://api.github.com/repos/coopengo/{repo}/pulls/{pr}'
 GH_URL_ISSUE = 'https://api.github.com/repos/coopengo/{repo}/issues/{pr}'
 
 # Initialize information for Redmine
 RM_URL = 'https://support.coopengo.com/issues/{issue}.json'
+RM_TOKEN = os.environ['REDMINE_TOKEN']
 RM_HEADERS = {'X-Redmine-API-Key': RM_TOKEN}
 
 # compile regular expression for title, body, changelog
 title_regexp = re.compile('\w+: .+')
 body_regexp = re.compile('.*(fix|ref) #(\d+)', re.M | re.I | re.S)
+changelog_regexp = re.compile('\* (BUG|FEA|OTH)#(\d+)')
 
-bug_regexp = re.compile(
-    '## \[title_en\]((.|\n)*)## \[title_fr\]((.|\n)*)### \[repro_fr\]((.|\n)*)### \[correction_fr\]((.|\n)*)\[parametrage_fr\]((.|\n)*)### \[scripts_fr\]((.|\n)*)## \[business_modules\]((.|\n)*)## \[original_description\]((.|\n)*$)')
-feature_regexp = re.compile(
-    '## \[title_en\]((.|\n)*)## \[title_fr\]((.|\n)*)### \[parametrage_fr\]((.|\n)*)### \[scripts_fr\]((.|\n)*)## \[business_modules\]((.|\n)*)## \[original_description\]((.|\n)*$)')
+bugStr = ("## \[title_en\]((.|\n)*)"
+          "## \[title_fr\]((.|\n)*)"
+          "### \[repro_fr\]((.|\n)*)"
+          "### \[correction_fr\]((.|\n)*)"
+          "\[parametrage_fr\]((.|\n)*)"
+          "### \[scripts_fr\]((.|\n)*)"
+          "## \[business_modules\]((.|\n)*)"
+          "## \[original_description\]((.|\n)*$)")
+
+featureStr = ("## \[title_en\]((.|\n)*)"
+              "## \[title_fr\]((.|\n)*)"
+              "### \[parametrage_fr\]((.|\n)*)"
+              "### \[scripts_fr\]((.|\n)*)"
+              "## \[business_modules\]((.|\n)*)"
+              "## \[original_description\]((.|\n)*$)")
+
+bug_regexp = re.compile(bugStr)
+feature_regexp = re.compile(featureStr)
+
 minimum_regexp = re.compile('[\s\S]{15,}')
 
 
@@ -194,7 +211,7 @@ def check_body():
 # grp1 = title_en, grp3 = title_fr, grp5 = Scenario de reproduction, grp7 = correction, grp9 = parametrages_fr, grp11 = scripts_fr, grp13 = business modules, grp15 = original description
 
 
-def check_content():
+def check_content_mdfiles():
     ok = True
     gh_files = get_gh_files()
 
@@ -294,8 +311,68 @@ def check_content():
         print('content :'+fg('red') + 'ko' +attr(0) )
     return ok
 
+def _check_content_changelog_line(label, line):
+    ok = True
+    m = changelog_regexp.match(line)
+    if m:
+        issue_type = m.group(1).lower()
+        if issue_type != 'oth':
+            global rm_issue_type
+            if rm_issue_type and rm_issue_type != issue_type:
+                ok = False
+                print(('content:ko:changelog:{}:issue_type:{}{}'.format(
+                    label, rm_issue_type, issue_type)))
+            else:
+                rm_issue_type = issue_type
+                print(('content:ok:changelog:{}:issue_type:{}'.format(
+                    label, issue_type)))
+            issue = int(m.group(2))
+            global rm_issue
+            if rm_issue and rm_issue != issue:
+                ok = False
+                print(('content:ko:changelog:{}:issue:{}-{}'.format(
+                    label, issue, rm_issue)))
+            else:
+                rm_issue = issue
+                print(('content:ok:changelog:{}:issue:{}'.format(label, issue)))
+        else:
+            print(('content:ok:changelog:{}:issue_type:{}'.format(
+                    label, issue_type)))
+    else:
+        ok = False
+        print(('content:ko:changelog:{}:{}'.format(label, line)))
+    return ok
 
-#
+
+def check_content():
+    ok = True
+    if 'bypass content check' in gh_labels:
+        print('content:bypass')
+    else:
+        changelogs = []
+        for f in get_gh_files():
+            if 'CHANGELOG' in f['filename']:
+                changelogs.append(f)
+        if changelogs:
+            for changelog in changelogs:
+                label = changelog['filename'].split('/')[-2]
+                patch = changelog['patch']
+                lines = [
+                    line[1:].strip()
+                    for line in patch.splitlines()
+                    if line.startswith('+')]
+                if lines:
+                    if not _check_content_changelog_line(label, lines[0]):
+                        ok = False
+                else:
+                    ok = False
+                    print(('content:ko:changelog:{}'.format(
+                        changelog['filename'])))
+        else:
+            ok = False
+            print('content:' +fd('red') +'ko' +attr(0) +':changelog')
+    return ok
+# 
 def check_redmine():
     ok = True
     global rm_issue, rm_issue_type, real_issue_type
@@ -370,9 +447,14 @@ def main():
     ok = check_title() and ok
     ok = check_body() and ok
     ok = check_redmine() and ok
+    ok = check_content_mdfiles() and ok
     ok = check_content() and ok
 
-    print("main:ok")
+    if not ok:
+        if 'bypass meta check' in gh_labels:
+            print('meta:bypass')
+    else:
+        sys.exit(1)
 
 
 if __name__ == '__main__':
