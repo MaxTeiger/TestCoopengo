@@ -40,18 +40,22 @@ Doing so will require the following:
 
 #### New libraries used:
 
-python-redmine
-
+python-redmine : used in coog redmine update (**step 1**) and when updating redmine (**step3**)
 ```bash
 ~$ pip3 install python-redmine
 ```
-colored (for drone check-meta)
+colored : used in drone check-meta (**step 2**)
 ```bash
 ~$ pip3 install colored --upgrade
 ```
-
+PyGitHub : used in **step 3** in premerge-script.py
+```bash
+~$ pip3 install PyGithub 
+```
 #### Template engines
-Mako
+> Both used in **step 4** when generating html file
+
+Mako 
 
 ```bash
 ~$ pip3 install Mako
@@ -62,13 +66,6 @@ mistune
 ```bash
 ~$ pip3 install mistune
 ```
-
-Define REDMINE_TOKEN as an environment variable:
-
-```bash
-~$ export REDMINE_TOKEN=<your_token>
-```
-or in **.bashrc** file
   
 
 ## How to use
@@ -78,10 +75,11 @@ or in **.bashrc** file
 In **coog** virtualenv, use:
 
 ```bash
-~$ coog redmine update <issue_number>
+(coog)~$ coog redmine update <issue_number>
 ```
+This will call the script *coog-redmine* which calls *init_redmine_content.py*
 
-this will open and create an editable .md file in **[COOG]/doc/issues**.
+It will open and create an editable .md file in **[COOG]/doc/issues**.
 
 >**WARNING: Do not remove or modify tags**
 
@@ -97,19 +95,30 @@ Once your modifications are finished, you can save and close the editor.
 
 #### Step 3
 
-For the moment, only prepare-commit-message in **.git/hooks** is implemented. This hook is triggered before a merge request is done, but it stays local.
+Two solutions were implemented : 
+1. premerge-script.py : 
+	* Its purpose is to update directly the repository on **GitHub** 
+	* The project is neither cloned nor pushed. The script just commit on the branch of the pull request after having updated RedMine
+	```bash
+	~$ python3 premerge-script.py
+	```
+2. upgrade-github, upgrade-github.py
+	* launch upgrade-github it will clone the repository you want, run upgrade-github.py on it
+	* upgrade-github.py will update redmine according to files present in the git repo, and delete theses files
+	* then, upgrade-github will push changes on github 
+		
+	```bash
+	~$ ./upgrade-github git@github.com:owner/repo.git
+	```
 
-The hook updates redmine tickets with the contents of files in **doc/issues**, and then delete the files because we don't need them after the merge.
-
-Maybe check .gitattributes
 
   ----
 #### Step 4
 
 You just have to run bl_fr2.py *(can be converted into command line)* with the project name and version for which you want a review.
-
+bl_fr.py has been updated on coog too, so you can use : 
 ```bash
-~$ python bl_fr2.py <api_key> "<project_name>"  "<version>"
+(coog)~$ python bl_fr2.py <api_key> "<project_name>"  "<version>"
 ```
 
 This will create a HTML file in doc/reviews which name is version-review.html

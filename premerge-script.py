@@ -12,8 +12,8 @@ import base64
 # Retrieve from the environment variables usefull infos
 # after Drone as cloned the project
 
-REPO = 'TestCoopengo'
-PR =40
+REPO = os.environ['REPO_NAME'] # OR RETRIEVE THE NAME OF THE GITHUB REPO (TestCoopengo for tests)
+PR = os.environ['PULL_REQUEST_ID'] # OR RETRIEVE PULL REQUEST ID (39 or 40)
 GH_TOKEN = os.environ['GITHUB_TOKEN']
 
 
@@ -42,14 +42,13 @@ print("\nTrying to connect to RedMine...", end='')
 redmine = Redmine(RM_URL, key=RM_TOKEN)
 print("\tOK !")
 
-
+# for each file
 for fileName in fileNames:
     if 'doc/issues/' in fileName and fileName.endswith('.md'):
         tmpFileName = fileName.replace('doc/issues/','')
         issueId = int(tmpFileName.replace('.md', ''))
 
-
-        
+        # read file content 
         try: 
             print("\nRetrieving the file...", end='')
             # Retrieve content of relative file
@@ -60,8 +59,7 @@ for fileName in fileNames:
             print("\t\tError : File doesn't exists")
             continue
             
-        
-        
+        # Update the corresponding issue on redmine with the content of the file
         try: 
             print("Update issue " +str(issueId) +"...", end='')
             redmine.issue.update(issueId, description=content)
@@ -70,7 +68,7 @@ for fileName in fileNames:
             print("\t\tError : Issue doesn't exist or impossible to read the content of the file")
             continue
             
-
+        # delete the file in github repo
         try: 
             print("Delete file from Github...", end='')
             contentToDelete = repo.get_contents(fileName, ref=pr.head.ref)

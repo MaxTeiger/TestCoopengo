@@ -6,7 +6,7 @@ set -euo pipefail
 IFS=$'\n\t'
 
 # clone using ssh
-repository="git@github.com:MaxTeiger/TestCoopengo.git"
+repository=$1
 DIR="$HOME/TestDirectory"
 
 
