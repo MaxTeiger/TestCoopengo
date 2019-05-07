@@ -13,7 +13,7 @@ import base64
 # after Drone as cloned the project
 
 REPO = 'TestCoopengo'
-PR = 40
+PR =40
 GH_TOKEN = os.environ['GITHUB_TOKEN']
 
 
@@ -49,22 +49,45 @@ for fileName in fileNames:
         issueId = int(tmpFileName.replace('.md', ''))
 
 
-        print("\nRetrieving the file...", end='')
-        # Retrieve content of relative file
-        content = base64.b64decode(repo.get_contents(fileName, ref=pr.head.ref).content)
-        content = content.decode('utf8')
         
-        print("\t\tOK !")
+        try: 
+            print("\nRetrieving the file...", end='')
+            # Retrieve content of relative file
+            content = base64.b64decode(repo.get_contents(fileName, ref=pr.head.ref).content)
+            content = content.decode('utf8')
+            print("\t\tOK !")
+        except:
+            print("\t\tError : File doesn't exists")
+            continue
+            
+        
+        
+        try: 
+            print("Update issue " +str(issueId) +"...", end='')
+            redmine.issue.update(issueId, description=content)
+            print("\t\tOK !")
+        except:
+            print("\t\tError : Issue doesn't exist or impossible to read the content of the file")
+            continue
+            
 
-        print("Update issue " +str(issueId) +"...", end='')
-        redmine.issue.update(issueId, description=content)
-        print("\t\tOK !")
+        try: 
+            print("Delete file from Github...", end='')
+            contentToDelete = repo.get_contents(fileName, ref=pr.head.ref)
 
-        print("Delete file from Github...", end='')
-        contentToDelete = repo.get_contents(fileName, ref=pr.head.ref)
+            if pr.is_merged(): 
+                print("\nThis pull request is already merged, impossible to delete file...")
+            else:
+                repo.delete_file(contentToDelete.path, "Remove "+fileName, contentToDelete.sha, pr.head.ref)
+                print("\tOK !")
+        except:
+            print("\tError : Impossible to delete file")
+            continue
 
-        if pr.is_merged(): 
-            print("\nThis pull request is already merged, impossible to delete file...")
-        else:
-            repo.delete_file(contentToDelete.path, "Remove "+fileName, contentToDelete.sha, pr.head.ref)
-            print("\tOK !")
+
+
+
+
+            
+
+    # c'est même possible de merge la pull request après directment depuis le code 
