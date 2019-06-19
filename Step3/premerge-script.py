@@ -15,8 +15,8 @@ import base64
 # Retrieve from the environment variables usefull infos
 # after Drone as cloned the project
 
-REPO = os.environ['DRONE_REPO_NAME'] # OR RETRIEVE THE NAME OF THE GITHUB REPO (TestCoopengo for tests)
-PR = os.environ['DRONE_PULL_REQUEST'] # OR RETRIEVE PULL REQUEST ID (39 or 40)
+REPO = 'TestCoopengo' # OR RETRIEVE THE NAME OF THE GITHUB REPO (TestCoopengo for tests)
+PR = 41 # OR RETRIEVE PULL REQUEST ID (39 or 40)
 GH_TOKEN = os.environ['GITHUB_TOKEN']
 
 
@@ -64,11 +64,13 @@ def update_redmine():
         except:
             print("\t\tError : File doesn't exists (maybe already deleted ?)")
             continue
-
+        
         # Update the corresponding issue on redmine with the content of the file
-        try:
+        try:        
+            newTitle=content.split("\n")[0].replace('## ', '').replace('[title_en]','')
+            newDescr=content.split("\n",2)[2]
             print("Update issue " + str(issueId) + "...", end='')
-            redmine.issue.update(issueId, description=content)
+            redmine.issue.update(issueId, description=newDescr, subject=newTitle)
             print("\t\tOK !")
         except:
             print(
