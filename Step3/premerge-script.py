@@ -15,8 +15,8 @@ import base64
 # Retrieve from the environment variables usefull infos
 # after Drone as cloned the project
 
-REPO = 'TestCoopengo' # OR RETRIEVE THE NAME OF THE GITHUB REPO (TestCoopengo for tests)
-PR = 41 # OR RETRIEVE PULL REQUEST ID (39 or 40)
+REPO = os.environ['DRONE_REPO_NAME']
+PR = os.environ['DRONE_PULL_REQUEST'] # OR RETRIEVE PULL REQUEST ID (39 or 40)
 GH_TOKEN = os.environ['GITHUB_TOKEN']
 
 
@@ -67,6 +67,7 @@ def update_redmine():
         
         # Update the corresponding issue on redmine with the content of the file
         try:        
+            content=content.replace('(required)','').replace('(required / automatic)','')
             newTitle=content.split("\n")[0].replace('## ', '').replace('[title_en]','')
             newDescr=content.split("\n",2)[2]
             result = newDescr.endswith("[Automatically updated]")
