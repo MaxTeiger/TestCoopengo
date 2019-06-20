@@ -45,7 +45,7 @@ def update_redmine():
 
 
     # Updating Redmine
-    print("\nTrying to connect to RedMine...", end='')
+    print("Trying to connect to RedMine...", end='')
     redmine = Redmine(RM_URL, key=RM_TOKEN)
     print("\tOK !")
 
@@ -69,7 +69,10 @@ def update_redmine():
         try:        
             newTitle=content.split("\n")[0].replace('## ', '').replace('[title_en]','')
             newDescr=content.split("\n",2)[2]
-            print("Update issue " + str(issueId) + "...", end='')
+            result = newDescr.endswith("[Automatically updated]")
+            if not result:
+                newDescr=newDescr+"\n[Automatically updated]"
+            print("Update issue " + str(issueId) + " in Redmine...", end='')
             redmine.issue.update(issueId, description=newDescr, subject=newTitle)
             print("\t\tOK !")
         except:
