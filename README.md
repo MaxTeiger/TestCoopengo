@@ -1,6 +1,6 @@
 
 # Feature #10604
-[]!(https://img.shields.io/github/issues/MaxTeiger/TestCoopengo)
+![](https://img.shields.io/github/issues/MaxTeiger/TestCoopengo)
 
 ## Objectives
 
